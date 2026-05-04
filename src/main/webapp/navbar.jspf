@@ -1,0 +1,82 @@
+<%-- Shared navbar — include in every page. Parent must declare JSTL taglib. --%>
+<nav class="navbar">
+
+    <%-- LEFT: nav links --%>
+    <div class="navbar-left">
+        <a href="${pageContext.request.contextPath}/home">Home</a>
+        <a href="${pageContext.request.contextPath}/shop">Shop</a>
+        <a href="${pageContext.request.contextPath}/about">About Us</a>
+        <a href="${pageContext.request.contextPath}/contact">Contact</a>
+        <c:if test="${not empty sessionScope.loggedInUser}">
+            <a href="${pageContext.request.contextPath}/my-orders">My Orders</a>
+        </c:if>
+    </div>
+
+    <%-- CENTER: logo --%>
+    <a href="${pageContext.request.contextPath}/home" class="navbar-logo">
+        <img src="https://panjeerighar.com/cdn/shop/files/Assetl1.svg?v=1770722134" alt="Panjeeri Ghar" class="navbar-logo-img">
+    </a>
+
+    <%-- RIGHT: account + cart --%>
+    <div class="navbar-right">
+        <c:choose>
+            <c:when test="${not empty sessionScope.loggedInUser}">
+
+                <%-- Account circle with dropdown --%>
+                <div style="position:relative;">
+                    <button class="navbar-account" id="nb-acc-btn"
+                            onclick="nbToggleAcc()" aria-label="Account">
+                        ${sessionScope.loggedInUser.fullName.substring(0,1).toUpperCase()}
+                    </button>
+                    <div class="account-popover" id="nb-acc-pop">
+                        <button class="account-popover-close" onclick="nbCloseAcc()">&#10005;</button>
+                        <div class="account-popover-name">${sessionScope.loggedInUser.fullName}</div>
+                        <div class="account-popover-email">${sessionScope.loggedInUser.email}</div>
+                        <div class="account-popover-btns">
+                            <a href="${pageContext.request.contextPath}/my-orders" class="account-popover-btn">
+                                &#128230; My Orders
+                            </a>
+                            <c:if test="${sessionScope.loggedInUser.role == 'admin'}">
+                                <a href="${pageContext.request.contextPath}/admin/dashboard" class="account-popover-btn">
+                                    &#9881; Admin
+                                </a>
+                            </c:if>
+                            <a href="${pageContext.request.contextPath}/logout" class="account-popover-btn">
+                                &#8594; Log out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <%-- Cart icon --%>
+                <button class="navbar-cart" onclick="openCartDrawer()" aria-label="Open cart">
+                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    <span class="cart-badge" id="nb-cart-badge" style="display:none;"></span>
+                </button>
+
+            </c:when>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/login"
+                   style="font-size:13px;color:var(--color-brown);font-weight:400;">Log in</a>
+                <a href="${pageContext.request.contextPath}/register"
+                   class="btn-secondary" style="width:auto;padding:10px 22px;font-size:12px;">Register</a>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</nav>
+
+<script>
+function nbToggleAcc() {
+    document.getElementById('nb-acc-pop').classList.toggle('open');
+}
+function nbCloseAcc() {
+    document.getElementById('nb-acc-pop').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+    var pop = document.getElementById('nb-acc-pop');
+    var btn = document.getElementById('nb-acc-btn');
+    if (pop && !pop.contains(e.target) && btn && !btn.contains(e.target)) {
+        pop.classList.remove('open');
+    }
+});
+</script>
